@@ -214,6 +214,11 @@ cd ${CURDIR}
 # First the flat library where arch-independent stuff will
 # end up
 clone_dir ${LIBCBASE}/lib ${STAGEDIR}/lib
+# Multiarch
+if [ -d ${LIBCBASE}/lib64 ]; then
+  clone_dir ${LIBCBASE}/lib64 ${STAGEDIR}/lib
+  ln -sf lib ${STAGEDIR}/lib64
+fi
 
 # The C library may be in a per-arch subdir (multiarch)
 # OR it may not...
@@ -297,6 +302,10 @@ for file in ${LINKSUSRSBIN} ; do
     TARGET=`readlink $file`
     echo "slink /sbin/${BASE} ${TARGET} 755 0 0" >> filelist-tmp.txt
 done;
+
+if [ -s ${STAGEDIR}/lib64 ]; then
+  echo "slink /lib64 lib 755 0 0" >> filelist-tmp.txt
+fi
 
 diff filelist-final.txt filelist-tmp.txt >/dev/null 2>&1 || mv filelist-tmp.txt filelist-final.txt
 
