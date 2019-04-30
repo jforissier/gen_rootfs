@@ -52,6 +52,9 @@ function clone_dir()
 }
 
 CC_PREFIX=`${CROSS_COMPILE}gcc -print-multiarch`
+if [ "$CC_PREFIX" == "" ]; then
+    CC_PREFIX=`echo ${CROSS_COMPILE} | sed 's@.*/\(.*\)-$@\1@'`
+fi
 case "${CC_PREFIX}" in
 aarch64-linux-gnu)
     LIBCBASE=$(dirname $(${CROSS_COMPILE}gcc -print-file-name=ld-linux-aarch64.so.1))/..
